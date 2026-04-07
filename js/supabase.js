@@ -2,8 +2,8 @@
 // SUPABASE CONFIG - GANTI DENGAN DATA KAMU
 // ============================================
 
-const SUPABASE_URL = 'https://aibbyhfjmvqqtszrenyk.supabase.co';  // GANTI!
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpYmJ5aGZqbXZxcXRzenJlbnlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzAyOTIsImV4cCI6MjA5MTEwNjI5Mn0.-LMpuwfLXNTEwJuiKEzjCNEw_BAFzXEg9j5SdKBc1NU';    // GANTI!
+const SUPABASE_URL = 'https://aibbyhfjmvqqtszrenyk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpYmJ5aGZqbXZxcXRzenJlbnlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzAyOTIsImV4cCI6MjA5MTEwNjI5Mn0.-LMpuwfLXNTEwJuiKEzjCNEw_BAFzXEg9j5SdKBc1NU';
 
 // ============================================
 // AUTH FUNCTIONS
