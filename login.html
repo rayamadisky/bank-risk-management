@@ -69,58 +69,36 @@
     </div>
 
     <script src="js/app.js"></script>
+    <script src="js/supabase.js"></script>  <!-- TAMBAH INI -->
     <script>
-        // Check if already logged in
-        if (isLoggedIn()) {
+    // Check login
+    if (isLoggedIn()) {
+        window.location.href = 'index.html';
+    }
+
+    // Toggle password visibility
+    function togglePassword() {
+        const input = document.getElementById('password');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // Form submission - GANTI JADI INI
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        // GANTI DARI: const result = login(username, password);
+        // MENJADI:
+        const result = await loginDB(username, password);
+        
+        if (result.success) {
             window.location.href = 'index.html';
+        } else {
+            alert(result.message);
         }
-
-        // Login form handler
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const result = login(username, password);
-            
-            if (result.success) {
-                window.location.href = 'index.html';
-            } else {
-                showAlert(result.message, 'danger');
-            }
-        });
-
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.innerHTML = `
-                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
-                    <line x1="1" y1="1" x2="23" y2="23"/>
-                `;
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.innerHTML = `
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                `;
-            }
-        }
-
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            container.innerHTML = `
-                <div class="alert alert-${type}">
-                    <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor" style="width: 20px; height: 20px;">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>${message}</div>
-                </div>
-            `;
-        }
+    });
     </script>
 </body>
 </html>
