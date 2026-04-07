@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Risk Event - Bank Risk Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11"/>
+                    </svg>
+                </div>
+                <span class="sidebar-brand-text">BankRisk</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Menu Utama</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>Dashboard
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Formulir</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-form.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                        </svg>Risk Event
+                    </a></li>
+                    <li class="nav-item"><a href="loss-form.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>Loss Event
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Data</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-list.html" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Risk
+                    </a></li>
+                    <li class="nav-item"><a href="loss-list.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Loss
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h2 class="header-title">Daftar Risk Event</h2>
+            <div class="header-actions">
+                <a href="risk-form.html" class="btn btn-primary btn-sm">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Tambah Risk
+                </a>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div id="alertContainer"></div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label class="filter-label">Cabang</label>
+                    <select id="filterCabang" class="filter-control" onchange="applyFilters()">
+                        <option value="">Semua Cabang</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Kategori</label>
+                    <select id="filterKategori" class="filter-control" onchange="applyFilters()">
+                        <option value="">Semua Kategori</option>
+                        <option value="operasional">Risiko Operasional</option>
+                        <option value="kredit">Risiko Kredit</option>
+                        <option value="pasar">Risiko Pasar</option>
+                        <option value="likuiditas">Risiko Likuiditas</option>
+                        <option value="kepatuhan">Risiko Kepatuhan</option>
+                        <option value="strategik">Risiko Strategik</option>
+                        <option value="reputasi">Risiko Reputasi</option>
+                        <option value="hukum">Risiko Hukum</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Level Risk</label>
+                    <select id="filterLevel" class="filter-control" onchange="applyFilters()">
+                        <option value="">Semua Level</option>
+                        <option value="rendah">Rendah</option>
+                        <option value="sedang">Sedang</option>
+                        <option value="tinggi">Tinggi</option>
+                        <option value="ekstrem">Ekstrem</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select id="filterStatus" class="filter-control" onchange="applyFilters()">
+                        <option value="">Semua Status</option>
+                        <option value="draft">Draft</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Cari</label>
+                    <input type="text" id="filterSearch" class="filter-control" placeholder="Cari deskripsi..." onkeyup="applyFilters()">
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-value" id="totalRisk">0</div>
+                    <div class="summary-label">Total Risk Event</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value text-warning" id="totalDraft">0</div>
+                    <div class="summary-label">Draft</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value text-success" id="totalApproved">0</div>
+                    <div class="summary-label">Approved</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value text-danger" id="totalEkstrem">0</div>
+                    <div class="summary-label">Level Ekstrem</div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>Cabang</th>
+                                    <th>Kategori</th>
+                                    <th>Deskripsi</th>
+                                    <th>Level</th>
+                                    <th>Nominal</th>
+                                    <th>Status</th>
+                                    <th>PIC</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="riskTableBody">
+                                <!-- Data will be populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="emptyState" class="text-muted" style="text-align: center; padding: 3rem; display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 64px; height: 64px; margin-bottom: 1rem; opacity: 0.5;">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p>Tidak ada data risk event</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+        <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; max-width: 400px; width: 90%;">
+            <h3 style="margin-bottom: 1rem;">Konfirmasi Hapus</h3>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Apakah Anda yakin ingin menghapus risk event ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button onclick="closeDeleteModal()" class="btn btn-secondary">Batal</button>
+                <button onclick="confirmDelete()" class="btn btn-danger">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Check login
+        if (!isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        let deleteId = null;
+
+        // Populate cabang filter
+        const cabangFilter = document.getElementById('filterCabang');
+        Object.entries(CABANG_LIST).forEach(([key, label]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = label;
+            cabangFilter.appendChild(option);
+        });
+
+        // Render table
+        function renderTable() {
+            const events = getRiskEvents();
+            const tbody = document.getElementById('riskTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Apply filters
+            const filterCabang = document.getElementById('filterCabang').value;
+            const filterKategori = document.getElementById('filterKategori').value;
+            const filterLevel = document.getElementById('filterLevel').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterSearch = document.getElementById('filterSearch').value.toLowerCase();
+            
+            let filtered = events.filter(e => {
+                if (filterCabang && e.cabang !== filterCabang) return false;
+                if (filterKategori && e.kategori !== filterKategori) return false;
+                if (filterLevel && e.level_risiko !== filterLevel) return false;
+                if (filterStatus && e.status !== filterStatus) return false;
+                if (filterSearch && !e.deskripsi.toLowerCase().includes(filterSearch)) return false;
+                return true;
+            });
+
+            // Update summary
+            document.getElementById('totalRisk').textContent = events.length;
+            document.getElementById('totalDraft').textContent = events.filter(e => e.status === 'draft').length;
+            document.getElementById('totalApproved').textContent = events.filter(e => e.status === 'approved').length;
+            document.getElementById('totalEkstrem').textContent = events.filter(e => e.level_risiko === 'ekstrem').length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            tbody.innerHTML = filtered.map((event, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${formatDate(event.tanggal_kejadian)}</td>
+                    <td>${getCabangLabel(event.cabang)}</td>
+                    <td>${getKategoriRiskLabel(event.kategori)}</td>
+                    <td class="truncate" title="${event.deskripsi}">${event.deskripsi}</td>
+                    <td><span class="badge badge-${getRiskLevelClass(event.level_risiko)}">${getRiskLevelLabel(event.level_risiko)}</span></td>
+                    <td class="nominal">${formatRupiah(event.nominal_dampak)}</td>
+                    <td><span class="badge badge-${getStatusClass(event.status)}">${getStatusLabel(event.status)}</span></td>
+                    <td>${event.pic}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="viewDetail(${event.id})" class="btn btn-ghost btn-sm" title="Lihat Detail">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                            <button onclick="openDeleteModal(${event.id})" class="btn btn-ghost btn-sm text-danger" title="Hapus">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function applyFilters() {
+            renderTable();
+        }
+
+        function viewDetail(id) {
+            const event = getRiskEventById(id);
+            if (event) {
+                alert(`Detail Risk Event:
+
+ID: ${event.id}
+Tanggal: ${formatDate(event.tanggal_kejadian)}
+Cabang: ${getCabangLabel(event.cabang)}
+Kategori: ${getKategoriRiskLabel(event.kategori)}
+Level: ${getRiskLevelLabel(event.level_risiko)}
+Status: ${getStatusLabel(event.status)}
+
+Deskripsi:
+${event.deskripsi}
+
+Penyebab:
+${event.penyebab}
+
+Dampak:
+${event.dampak}
+
+Mitigasi:
+${event.mitigasi}
+
+PIC: ${event.pic}
+Target Penyelesaian: ${formatDate(event.target_penyelesaian)}`);
+            }
+        }
+
+        function openDeleteModal(id) {
+            deleteId = id;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            deleteId = null;
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (deleteId) {
+                deleteRiskEvent(deleteId);
+                showAlert('Risk event berhasil dihapus!', 'success');
+                renderTable();
+                closeDeleteModal();
+            }
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>

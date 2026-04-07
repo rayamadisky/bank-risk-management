@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Loss Event - Bank Risk Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11"/>
+                    </svg>
+                </div>
+                <span class="sidebar-brand-text">BankRisk</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Menu Utama</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>Dashboard
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Formulir</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-form.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                        </svg>Risk Event
+                    </a></li>
+                    <li class="nav-item"><a href="loss-form.html" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>Loss Event
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Data</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-list.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Risk
+                    </a></li>
+                    <li class="nav-item"><a href="loss-list.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Loss
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h2 class="header-title">Form Loss Event</h2>
+            <a href="index.html" class="btn btn-ghost btn-sm">Kembali</a>
+        </header>
+
+        <div class="page-content">
+            <div id="alertContainer"></div>
+
+            <form id="lossForm" class="form-card">
+                <!-- Section 1: Informasi Dasar -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Informasi Dasar</h3>
+                    <p class="form-section-subtitle">Informasi umum tentang loss event</p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Cabang</label>
+                            <select name="cabang" id="cabang" class="form-control" required>
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Tanggal Kejadian</label>
+                            <input type="date" name="tanggal_kejadian" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Lokasi Kejadian</label>
+                        <input type="text" name="lokasi" class="form-control" placeholder="Contoh: Ruang Teller, ATM, dll">
+                    </div>
+                </div>
+
+                <!-- Section 2: Kategori Loss (Basel) -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Kategori Loss Event</h3>
+                    <p class="form-section-subtitle">Pilih kategori sesuai dengan Basel Loss Event Categories</p>
+
+                    <div class="form-group">
+                        <label class="form-label required">Kategori Loss</label>
+                        <div class="loss-category-grid">
+                            <label class="loss-category-card selected" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="internal_fraud" checked>
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Internal Fraud</div>
+                                    <div class="loss-category-desc">Penipuan, pencurian, atau penyalahgunaan oleh karyawan internal</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="external_fraud">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">External Fraud</div>
+                                    <div class="loss-category-desc">Penipuan, pencurian, atau serangan dari pihak eksternal</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="employment_practices">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Employment Practices</div>
+                                    <div class="loss-category-desc">Kesalahan terkait ketenagakerjaan dan keselamatan kerja</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="clients_products">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Clients, Products & Business</div>
+                                    <div class="loss-category-desc">Kesalahan pelayanan nasabah, produk, atau praktik bisnis</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="damage_to_assets">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Damage to Physical Assets</div>
+                                    <div class="loss-category-desc">Kerusakan pada aset fisik akibat bencana atau kecelakaan</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="business_disruption">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Business Disruption</div>
+                                    <div class="loss-category-desc">Gangguan bisnis dan kegagalan sistem</div>
+                                </div>
+                            </label>
+                            <label class="loss-category-card" onclick="selectLossCategory(this)">
+                                <input type="radio" name="kategori_loss" value="execution_delivery">
+                                <div class="loss-category-radio"></div>
+                                <div>
+                                    <div class="loss-category-title">Execution, Delivery & Process</div>
+                                    <div class="loss-category-desc">Kegagalan eksekusi, pengiriman, dan manajemen proses</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Deskripsi Loss -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Deskripsi Loss Event</h3>
+                    <p class="form-section-subtitle">Jelaskan secara detail tentang loss event</p>
+
+                    <div class="form-group">
+                        <label class="form-label required">Deskripsi Kejadian</label>
+                        <textarea name="deskripsi" class="form-control" rows="4" placeholder="Jelaskan secara detail apa yang terjadi..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Penyebab Kejadian</label>
+                        <textarea name="penyebab" class="form-control" rows="3" placeholder="Apa yang menyebabkan loss ini terjadi?" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Unit/Bagian Terkait</label>
+                            <input type="text" name="unit_terkait" class="form-control" placeholder="Contoh: Teller, CS, Back Office">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nama Terlapor (jika ada)</label>
+                            <input type="text" name="nama_terlapor" class="form-control" placeholder="Nama pihak yang terlibat">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Informasi Keuangan -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Informasi Keuangan</h3>
+                    <p class="form-section-subtitle">Detail kerugian finansial dan recovery</p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Nominal Kerugian</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="text" name="nominal_kerugian" id="nominalKerugian" class="form-control" placeholder="0" oninput="formatCurrency(this); calculateNetLoss()" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Recovery (Pemulihan)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="text" name="recovery" id="recovery" class="form-control" placeholder="0" oninput="formatCurrency(this); calculateNetLoss()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="net-loss-box">
+                        <div class="net-loss-label">Net Loss (Kerugian Bersih)</div>
+                        <div class="net-loss-value" id="netLossValue">Rp 0</div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label">Keterangan Recovery</label>
+                        <textarea name="keterangan_recovery" class="form-control" rows="2" placeholder="Jelaskan sumber recovery (asuransi, pelunasan, dll)"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 5: Tindak Lanjut -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Tindak Lanjut</h3>
+                    <p class="form-section-subtitle">Rencana penanganan dan pencegahan</p>
+
+                    <div class="form-group">
+                        <label class="form-label required">Tindakan Segera</label>
+                        <textarea name="tindakan_segera" class="form-control" rows="3" placeholder="Tindakan yang sudah atau akan segera dilakukan..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rencana Pencegahan</label>
+                        <textarea name="rencana_pencegahan" class="form-control" rows="3" placeholder="Rencana untuk mencegah kejadian serupa di masa depan..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">PIC (Penanggung Jawab)</label>
+                            <input type="text" name="pic" class="form-control" placeholder="Nama penanggung jawab" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Target Penyelesaian</label>
+                            <input type="date" name="target_penyelesaian" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status Pelaporan</label>
+                        <select name="status_pelaporan" class="form-control">
+                            <option value="internal">Internal Only</option>
+                            <option value="regulator">Dilaporkan ke Regulator</option>
+                            <option value="polisi">Dilaporkan ke Polisi</option>
+                            <option value="asuransi">Klaim Asuransi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                    <div>
+                        <label class="form-check" style="margin-bottom: 0.5rem;">
+                            <input type="radio" name="status" value="draft" checked> Simpan sebagai Draft
+                        </label>
+                        <label class="form-check">
+                            <input type="radio" name="status" value="submitted"> Submit untuk Approval
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="index.html" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-danger">Simpan Loss Event</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Check login
+        if (!isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Populate cabang dropdown
+        const user = getCurrentUser();
+        const cabangSelect = document.getElementById('cabang');
+        Object.entries(CABANG_LIST).forEach(([key, label]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = label;
+            if (label === user.cabang) option.selected = true;
+            cabangSelect.appendChild(option);
+        });
+
+        // Set default date
+        document.querySelector('input[name="tanggal_kejadian"]').valueAsDate = new Date();
+
+        // Loss category selection
+        function selectLossCategory(card) {
+            document.querySelectorAll('.loss-category-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+        }
+
+        // Calculate net loss
+        function calculateNetLoss() {
+            const nominal = parseCurrency(document.getElementById('nominalKerugian').value || '0');
+            const recovery = parseCurrency(document.getElementById('recovery').value || '0');
+            const netLoss = Math.max(0, nominal - recovery);
+            document.getElementById('netLossValue').textContent = formatRupiah(netLoss);
+        }
+
+        // Form submission
+        document.getElementById('lossForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const nominalKerugian = parseCurrency(formData.get('nominal_kerugian') || '0');
+            const recovery = parseCurrency(formData.get('recovery') || '0');
+            
+            const data = {
+                user_id: getCurrentUser().id,
+                user_nama: getCurrentUser().nama,
+                cabang: formData.get('cabang'),
+                kategori_loss: formData.get('kategori_loss'),
+                deskripsi: formData.get('deskripsi'),
+                tanggal_kejadian: formData.get('tanggal_kejadian'),
+                lokasi: formData.get('lokasi'),
+                penyebab: formData.get('penyebab'),
+                unit_terkait: formData.get('unit_terkait'),
+                nama_terlapor: formData.get('nama_terlapor'),
+                nominal_kerugian: nominalKerugian,
+                recovery: recovery,
+                net_loss: Math.max(0, nominalKerugian - recovery),
+                keterangan_recovery: formData.get('keterangan_recovery'),
+                tindakan_segera: formData.get('tindakan_segera'),
+                rencana_pencegahan: formData.get('rencana_pencegahan'),
+                pic: formData.get('pic'),
+                target_penyelesaian: formData.get('target_penyelesaian'),
+                status_pelaporan: formData.get('status_pelaporan'),
+                status: formData.get('status')
+            };
+            
+            createLossEvent(data);
+            showAlert('Loss event berhasil disimpan!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

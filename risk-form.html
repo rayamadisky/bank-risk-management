@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Risk Event - Bank Risk Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11"/>
+                    </svg>
+                </div>
+                <span class="sidebar-brand-text">BankRisk</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Menu Utama</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>Dashboard
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Formulir</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-form.html" class="nav-link active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                        </svg>Risk Event
+                    </a></li>
+                    <li class="nav-item"><a href="loss-form.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>Loss Event
+                    </a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Data</div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="risk-list.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Risk
+                    </a></li>
+                    <li class="nav-item"><a href="loss-list.html" class="nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        </svg>Daftar Loss
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h2 class="header-title">Form Risk Event</h2>
+            <a href="index.html" class="btn btn-ghost btn-sm">Kembali</a>
+        </header>
+
+        <div class="page-content">
+            <div id="alertContainer"></div>
+
+            <form id="riskForm" class="form-card">
+                <!-- Section 1: Informasi Dasar -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Informasi Dasar</h3>
+                    <p class="form-section-subtitle">Informasi umum tentang risk event</p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Cabang</label>
+                            <select name="cabang" id="cabang" class="form-control" required>
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Kategori Risk</label>
+                            <select name="kategori" class="form-control" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="operasional">Risiko Operasional</option>
+                                <option value="kredit">Risiko Kredit</option>
+                                <option value="pasar">Risiko Pasar</option>
+                                <option value="likuiditas">Risiko Likuiditas</option>
+                                <option value="kepatuhan">Risiko Kepatuhan</option>
+                                <option value="strategik">Risiko Strategik</option>
+                                <option value="reputasi">Risiko Reputasi</option>
+                                <option value="hukum">Risiko Hukum</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Tanggal Kejadian</label>
+                            <input type="date" name="tanggal_kejadian" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lokasi Kejadian</label>
+                            <input type="text" name="lokasi" class="form-control" placeholder="Contoh: Ruang Teller">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Deskripsi Risk Event</label>
+                        <textarea name="deskripsi" class="form-control" rows="4" placeholder="Jelaskan secara detail apa yang terjadi..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 2: Detail Risk -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Detail Risk</h3>
+                    <p class="form-section-subtitle">Informasi detail tentang risk dan dampaknya</p>
+
+                    <div class="form-group">
+                        <label class="form-label required">Penyebab Risk</label>
+                        <textarea name="penyebab" class="form-control" rows="3" placeholder="Apa yang menyebabkan risk ini terjadi?" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Dampak Risk</label>
+                        <textarea name="dampak" class="form-control" rows="3" placeholder="Apa dampak dari risk ini?" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Level Risk</label>
+                        <div class="risk-level-grid">
+                            <label class="risk-level-card selected" onclick="selectRiskLevel(this)">
+                                <input type="radio" name="level_risiko" value="rendah" checked>
+                                <div class="risk-level-dot rendah"></div>
+                                <div>
+                                    <div style="font-weight: 600;">Rendah</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak minimal</div>
+                                </div>
+                            </label>
+                            <label class="risk-level-card" onclick="selectRiskLevel(this)">
+                                <input type="radio" name="level_risiko" value="sedang">
+                                <div class="risk-level-dot sedang"></div>
+                                <div>
+                                    <div style="font-weight: 600;">Sedang</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak moderat</div>
+                                </div>
+                            </label>
+                            <label class="risk-level-card" onclick="selectRiskLevel(this)">
+                                <input type="radio" name="level_risiko" value="tinggi">
+                                <div class="risk-level-dot tinggi"></div>
+                                <div>
+                                    <div style="font-weight: 600;">Tinggi</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak signifikan</div>
+                                </div>
+                            </label>
+                            <label class="risk-level-card" onclick="selectRiskLevel(this)">
+                                <input type="radio" name="level_risiko" value="ekstrem">
+                                <div class="risk-level-dot ekstrem"></div>
+                                <div>
+                                    <div style="font-weight: 600;">Ekstrem</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak besar</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nominal Dampak (jika ada)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="text" name="nominal_dampak" class="form-control" placeholder="0" oninput="formatCurrency(this)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Mitigasi -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Rencana Mitigasi</h3>
+                    <p class="form-section-subtitle">Rencana penanganan dan mitigasi risk</p>
+
+                    <div class="form-group">
+                        <label class="form-label required">Rencana Mitigasi</label>
+                        <textarea name="mitigasi" class="form-control" rows="4" placeholder="Jelaskan rencana mitigasi..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">PIC (Penanggung Jawab)</label>
+                            <input type="text" name="pic" class="form-control" placeholder="Nama penanggung jawab" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Target Penyelesaian</label>
+                            <input type="date" name="target_penyelesaian" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                    <div>
+                        <label class="form-check" style="margin-bottom: 0.5rem;">
+                            <input type="radio" name="status" value="draft" checked> Simpan sebagai Draft
+                        </label>
+                        <label class="form-check">
+                            <input type="radio" name="status" value="submitted"> Submit untuk Approval
+                        </label>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="index.html" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Check login
+        if (!isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Populate cabang dropdown
+        const user = getCurrentUser();
+        const cabangSelect = document.getElementById('cabang');
+        Object.entries(CABANG_LIST).forEach(([key, label]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = label;
+            if (label === user.cabang) option.selected = true;
+            cabangSelect.appendChild(option);
+        });
+
+        // Set default date
+        document.querySelector('input[name="tanggal_kejadian"]').valueAsDate = new Date();
+
+        // Risk level selection
+        function selectRiskLevel(card) {
+            document.querySelectorAll('.risk-level-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+        }
+
+        // Form submission
+        document.getElementById('riskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                user_id: getCurrentUser().id,
+                user_nama: getCurrentUser().nama,
+                cabang: formData.get('cabang'),
+                kategori: formData.get('kategori'),
+                deskripsi: formData.get('deskripsi'),
+                tanggal_kejadian: formData.get('tanggal_kejadian'),
+                lokasi: formData.get('lokasi'),
+                penyebab: formData.get('penyebab'),
+                dampak: formData.get('dampak'),
+                level_risiko: formData.get('level_risiko'),
+                mitigasi: formData.get('mitigasi'),
+                pic: formData.get('pic'),
+                target_penyelesaian: formData.get('target_penyelesaian'),
+                status: formData.get('status'),
+                nominal_dampak: parseCurrency(formData.get('nominal_dampak') || '0')
+            };
+            
+            createRiskEvent(data);
+            showAlert('Risk event berhasil disimpan!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
