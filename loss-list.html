@@ -93,6 +93,14 @@
                     <label class="filter-label">Cabang</label>
                     <select id="filterCabang" class="filter-control" onchange="applyFilters()">
                         <option value="">Semua Cabang</option>
+                        <option value="cabang_pusat">Cabang Pusat</option>
+                        <option value="cabang_utara">Cabang Utara</option>
+                        <option value="cabang_selatan">Cabang Selatan</option>
+                        <option value="cabang_timur">Cabang Timur</option>
+                        <option value="cabang_barat">Cabang Barat</option>
+                        <option value="cabang_cibubur">Cabang Cibubur</option>
+                        <option value="cabang_bekasi">Cabang Bekasi</option>
+                        <option value="cabang_tangerang">Cabang Tangerang</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -132,15 +140,15 @@
                     <div class="summary-label">Total Loss Event</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value loss" id="totalNominal">Rp 0</div>
+                    <div class="summary-value" style="color: #ef4444;" id="totalNominal">Rp 0</div>
                     <div class="summary-label">Total Kerugian</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value recovery" id="totalRecovery">Rp 0</div>
+                    <div class="summary-value" style="color: #10b981;" id="totalRecovery">Rp 0</div>
                     <div class="summary-label">Total Recovery</div>
                 </div>
                 <div class="summary-card">
-                    <div class="summary-value loss" id="totalNetLoss">Rp 0</div>
+                    <div class="summary-value" style="color: #ef4444;" id="totalNetLoss">Rp 0</div>
                     <div class="summary-label">Total Net Loss</div>
                 </div>
             </div>
@@ -182,10 +190,10 @@
     </main>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+    <div id="deleteModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
         <div style="background: white; border-radius: 0.75rem; padding: 1.5rem; max-width: 400px; width: 90%;">
             <h3 style="margin-bottom: 1rem;">Konfirmasi Hapus</h3>
-            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Apakah Anda yakin ingin menghapus loss event ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">Apakah Anda yakin ingin menghapus loss event ini? Tindakan ini tidak dapat dibatalkan.</p>
             <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
                 <button onclick="closeDeleteModal()" class="btn btn-secondary">Batal</button>
                 <button onclick="confirmDelete()" class="btn btn-danger">Hapus</button>
@@ -193,7 +201,7 @@
         </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <script src="js/supabase.js"></script>
     <script>
         // Check login
         if (!isLoggedIn()) {
@@ -201,29 +209,61 @@
         }
 
         let deleteId = null;
+        let allEvents = [];
 
-        // Populate cabang filter
-        const cabangFilter = document.getElementById('filterCabang');
-        Object.entries(CABANG_LIST).forEach(([key, label]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = label;
-            cabangFilter.appendChild(option);
-        });
+        // Constants
+        const LOSS_CATEGORIES = {
+            'internal_fraud': 'Internal Fraud',
+            'external_fraud': 'External Fraud',
+            'employment_practices': 'Employment Practices',
+            'clients_products': 'Clients, Products & Business',
+            'damage_to_assets': 'Damage to Physical Assets',
+            'business_disruption': 'Business Disruption',
+            'execution_delivery': 'Execution, Delivery & Process'
+        };
+
+        const CABANG_LIST = {
+            'cabang_pusat': 'Cabang Pusat',
+            'cabang_utara': 'Cabang Utara',
+            'cabang_selatan': 'Cabang Selatan',
+            'cabang_timur': 'Cabang Timur',
+            'cabang_barat': 'Cabang Barat',
+            'cabang_cibubur': 'Cabang Cibubur',
+            'cabang_bekasi': 'Cabang Bekasi',
+            'cabang_tangerang': 'Cabang Tangerang'
+        };
+
+        const FORM_STATUS = {
+            'draft': { label: 'Draft', class: 'secondary' },
+            'submitted': { label: 'Submitted', class: 'info' },
+            'under_review': { label: 'Under Review', class: 'warning' },
+            'approved': { label: 'Approved', class: 'success' },
+            'rejected': { label: 'Rejected', class: 'danger' }
+        };
 
         // Render table
-        function renderTable() {
-            const events = getLossEvents();
+        async function renderTable() {
+            try {
+                allEvents = await getLossEventsDB();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Gagal mengambil data dari database');
+                return;
+            }
+            
+            applyFilters();
+        }
+
+        function applyFilters() {
             const tbody = document.getElementById('lossTableBody');
             const emptyState = document.getElementById('emptyState');
             
-            // Apply filters
             const filterCabang = document.getElementById('filterCabang').value;
             const filterKategori = document.getElementById('filterKategori').value;
             const filterStatus = document.getElementById('filterStatus').value;
             const filterSearch = document.getElementById('filterSearch').value.toLowerCase();
             
-            let filtered = events.filter(e => {
+            let filtered = allEvents.filter(e => {
                 if (filterCabang && e.cabang !== filterCabang) return false;
                 if (filterKategori && e.kategori_loss !== filterKategori) return false;
                 if (filterStatus && e.status !== filterStatus) return false;
@@ -232,11 +272,11 @@
             });
 
             // Update summary
-            const totalNominal = events.reduce((sum, e) => sum + (e.nominal_kerugian || 0), 0);
-            const totalRecovery = events.reduce((sum, e) => sum + (e.recovery || 0), 0);
-            const totalNetLoss = events.reduce((sum, e) => sum + (e.net_loss || 0), 0);
+            const totalNominal = allEvents.reduce((sum, e) => sum + (parseFloat(e.nominal_kerugian) || 0), 0);
+            const totalRecovery = allEvents.reduce((sum, e) => sum + (parseFloat(e.recovery) || 0), 0);
+            const totalNetLoss = allEvents.reduce((sum, e) => sum + (parseFloat(e.net_loss) || 0), 0);
             
-            document.getElementById('totalLoss').textContent = events.length;
+            document.getElementById('totalLoss').textContent = allEvents.length;
             document.getElementById('totalNominal').textContent = formatRupiah(totalNominal);
             document.getElementById('totalRecovery').textContent = formatRupiah(totalRecovery);
             document.getElementById('totalNetLoss').textContent = formatRupiah(totalNetLoss);
@@ -253,13 +293,13 @@
                 <tr>
                     <td>${index + 1}</td>
                     <td>${formatDate(event.tanggal_kejadian)}</td>
-                    <td>${getCabangLabel(event.cabang)}</td>
-                    <td>${getKategoriLossLabel(event.kategori_loss)}</td>
+                    <td>${CABANG_LIST[event.cabang] || event.cabang}</td>
+                    <td>${LOSS_CATEGORIES[event.kategori_loss] || event.kategori_loss}</td>
                     <td class="truncate" title="${event.deskripsi}">${event.deskripsi}</td>
-                    <td class="nominal loss">${formatRupiah(event.nominal_kerugian)}</td>
-                    <td class="nominal recovery">${formatRupiah(event.recovery)}</td>
-                    <td class="nominal loss" style="font-weight: 700;">${formatRupiah(event.net_loss)}</td>
-                    <td><span class="badge badge-${getStatusClass(event.status)}">${getStatusLabel(event.status)}</span></td>
+                    <td class="nominal" style="color: #ef4444;">${formatRupiah(event.nominal_kerugian)}</td>
+                    <td class="nominal" style="color: #10b981;">${formatRupiah(event.recovery)}</td>
+                    <td class="nominal" style="color: #ef4444; font-weight: 700;">${formatRupiah(event.net_loss)}</td>
+                    <td><span class="badge badge-${FORM_STATUS[event.status]?.class || 'secondary'}">${FORM_STATUS[event.status]?.label || event.status}</span></td>
                     <td>${event.pic}</td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
@@ -280,20 +320,16 @@
             `).join('');
         }
 
-        function applyFilters() {
-            renderTable();
-        }
-
         function viewDetail(id) {
-            const event = getLossEventById(id);
+            const event = allEvents.find(e => e.id === id);
             if (event) {
                 alert(`Detail Loss Event:
 
 ID: ${event.id}
 Tanggal: ${formatDate(event.tanggal_kejadian)}
-Cabang: ${getCabangLabel(event.cabang)}
-Kategori: ${getKategoriLossLabel(event.kategori_loss)}
-Status: ${getStatusLabel(event.status)}
+Cabang: ${CABANG_LIST[event.cabang] || event.cabang}
+Kategori: ${LOSS_CATEGORIES[event.kategori_loss] || event.kategori_loss}
+Status: ${FORM_STATUS[event.status]?.label || event.status}
 
 Deskripsi:
 ${event.deskripsi}
@@ -323,13 +359,30 @@ Target Penyelesaian: ${formatDate(event.target_penyelesaian)}`);
             document.getElementById('deleteModal').style.display = 'none';
         }
 
-        function confirmDelete() {
+        async function confirmDelete() {
             if (deleteId) {
-                deleteLossEvent(deleteId);
-                showAlert('Loss event berhasil dihapus!', 'success');
-                renderTable();
+                try {
+                    await deleteLossEventDB(deleteId);
+                    alert('Loss event berhasil dihapus!');
+                    renderTable();
+                } catch (error) {
+                    alert('Gagal menghapus data');
+                    console.error(error);
+                }
                 closeDeleteModal();
             }
+        }
+
+        // Helper functions
+        function formatRupiah(amount) {
+            if (!amount || isNaN(amount)) return 'Rp 0';
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
         // Initial render

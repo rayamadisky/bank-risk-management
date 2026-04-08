@@ -89,7 +89,14 @@
                         <div class="form-group">
                             <label class="form-label required">Cabang</label>
                             <select name="cabang" id="cabang" class="form-control" required>
-                                <!-- Options will be populated by JS -->
+                                <option value="cabang_pusat">Cabang Pusat</option>
+                                <option value="cabang_utara">Cabang Utara</option>
+                                <option value="cabang_selatan">Cabang Selatan</option>
+                                <option value="cabang_timur">Cabang Timur</option>
+                                <option value="cabang_barat">Cabang Barat</option>
+                                <option value="cabang_cibubur">Cabang Cibubur</option>
+                                <option value="cabang_bekasi">Cabang Bekasi</option>
+                                <option value="cabang_tangerang">Cabang Tangerang</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -145,34 +152,34 @@
                         <div class="risk-level-grid">
                             <label class="risk-level-card selected" onclick="selectRiskLevel(this)">
                                 <input type="radio" name="level_risiko" value="rendah" checked>
-                                <div class="risk-level-dot rendah"></div>
+                                <div class="risk-level-dot" style="background-color: #10b981;"></div>
                                 <div>
                                     <div style="font-weight: 600;">Rendah</div>
-                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak minimal</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">Dampak minimal</div>
                                 </div>
                             </label>
                             <label class="risk-level-card" onclick="selectRiskLevel(this)">
                                 <input type="radio" name="level_risiko" value="sedang">
-                                <div class="risk-level-dot sedang"></div>
+                                <div class="risk-level-dot" style="background-color: #f59e0b;"></div>
                                 <div>
                                     <div style="font-weight: 600;">Sedang</div>
-                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak moderat</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">Dampak moderat</div>
                                 </div>
                             </label>
                             <label class="risk-level-card" onclick="selectRiskLevel(this)">
                                 <input type="radio" name="level_risiko" value="tinggi">
-                                <div class="risk-level-dot tinggi"></div>
+                                <div class="risk-level-dot" style="background-color: #ef4444;"></div>
                                 <div>
                                     <div style="font-weight: 600;">Tinggi</div>
-                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak signifikan</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">Dampak signifikan</div>
                                 </div>
                             </label>
                             <label class="risk-level-card" onclick="selectRiskLevel(this)">
                                 <input type="radio" name="level_risiko" value="ekstrem">
-                                <div class="risk-level-dot ekstrem"></div>
+                                <div class="risk-level-dot" style="background-color: #dc2626;"></div>
                                 <div>
                                     <div style="font-weight: 600;">Ekstrem</div>
-                                    <div style="font-size: 0.75rem; color: var(--gray-500);">Dampak besar</div>
+                                    <div style="font-size: 0.75rem; color: #64748b;">Dampak besar</div>
                                 </div>
                             </label>
                         </div>
@@ -212,7 +219,7 @@
                 </div>
 
                 <!-- Submit -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
                     <div>
                         <label class="form-check" style="margin-bottom: 0.5rem;">
                             <input type="radio" name="status" value="draft" checked> Simpan sebagai Draft
@@ -230,66 +237,86 @@
         </div>
     </main>
 
-    <script src="js/app.js"></script>
-    <script src="js/supabase.js"></script>  <!-- TAMBAH INI -->
+    <script src="js/supabase.js"></script>
     <script>
-    // Check login
-    if (!isLoggedIn()) {
-        window.location.href = 'login.html';
-    }
+        // Check login
+        if (!isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
 
-    // Populate cabang dropdown
-    const user = getCurrentUser();
-    const cabangSelect = document.getElementById('cabang');
-    Object.entries(CABANG_LIST).forEach(([key, label]) => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = label;
-        if (label === user.cabang) option.selected = true;
-        cabangSelect.appendChild(option);
-    });
+        // Set default cabang from user
+        const user = getCurrentUser();
+        if (user.cabang) {
+            const cabangSelect = document.getElementById('cabang');
+            const cabangMap = {
+                'Cabang Pusat': 'cabang_pusat',
+                'Cabang Utara': 'cabang_utara',
+                'Cabang Selatan': 'cabang_selatan',
+                'Cabang Timur': 'cabang_timur',
+                'Cabang Barat': 'cabang_barat',
+                'Cabang Cibubur': 'cabang_cibubur',
+                'Cabang Bekasi': 'cabang_bekasi',
+                'Cabang Tangerang': 'cabang_tangerang'
+            };
+            const userCabangKey = cabangMap[user.cabang];
+            if (userCabangKey) {
+                cabangSelect.value = userCabangKey;
+            }
+        }
 
-    // Set default date
-    document.querySelector('input[name="tanggal_kejadian"]').valueAsDate = new Date();
+        // Set default date
+        document.querySelector('input[name="tanggal_kejadian"]').valueAsDate = new Date();
 
-    // Risk level selection
-    function selectRiskLevel(card) {
-        document.querySelectorAll('.risk-level-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        card.querySelector('input').checked = true;
-    }
+        // Risk level selection
+        function selectRiskLevel(card) {
+            document.querySelectorAll('.risk-level-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+        }
 
-    // Form submission - GANTI JADI INI
-    document.getElementById('riskForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = {
-            cabang: formData.get('cabang'),
-            kategori: formData.get('kategori'),
-            deskripsi: formData.get('deskripsi'),
-            tanggal_kejadian: formData.get('tanggal_kejadian'),
-            lokasi: formData.get('lokasi'),
-            penyebab: formData.get('penyebab'),
-            dampak: formData.get('dampak'),
-            level_risiko: formData.get('level_risiko'),
-            mitigasi: formData.get('mitigasi'),
-            pic: formData.get('pic'),
-            target_penyelesaian: formData.get('target_penyelesaian'),
-            status: formData.get('status'),
-            nominal_dampak: parseCurrency(formData.get('nominal_dampak') || '0')
-        };
-        
-        // GANTI DARI: createRiskEvent(data);
-        // MENJADI:
-        await createRiskEventDB(data);
-        
-        showAlert('Risk event berhasil disimpan!', 'success');
-        
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
-    });
+        // Format currency
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+                input.value = value;
+            }
+        }
+
+        function parseCurrency(value) {
+            return parseFloat(value.replace(/[^\d]/g, '')) || 0;
+        }
+
+        // Form submission
+        document.getElementById('riskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                cabang: formData.get('cabang'),
+                kategori: formData.get('kategori'),
+                deskripsi: formData.get('deskripsi'),
+                tanggal_kejadian: formData.get('tanggal_kejadian'),
+                lokasi: formData.get('lokasi'),
+                penyebab: formData.get('penyebab'),
+                dampak: formData.get('dampak'),
+                level_risiko: formData.get('level_risiko'),
+                mitigasi: formData.get('mitigasi'),
+                pic: formData.get('pic'),
+                target_penyelesaian: formData.get('target_penyelesaian'),
+                status: formData.get('status'),
+                nominal_dampak: parseCurrency(formData.get('nominal_dampak') || '0')
+            };
+            
+            try {
+                await createRiskEventDB(data);
+                alert('Risk event berhasil disimpan!');
+                window.location.href = 'index.html';
+            } catch (error) {
+                alert('Gagal menyimpan data. Periksa koneksi internet.');
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>

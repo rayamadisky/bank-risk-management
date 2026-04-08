@@ -1,146 +1,195 @@
-# Bank Risk Management - Static Version
+# Bank Risk Management - Supabase Version
 
-Sistem manajemen risk dan loss event untuk bank berbasis HTML/CSS/JavaScript murni. **Tidak memerlukan server atau database** - data disimpan di browser menggunakan localStorage.
+Sistem manajemen risk dan loss event untuk bank dengan database PostgreSQL via Supabase.
 
 ## Fitur
 
-### Autentikasi
-- Login system dengan role-based access
-- Default users tersedia (password: "password"):
-  - `admin` - Administrator
-  - `teller1` - Teller
-  - `cs1` - Customer Service
-  - `kc1` - Kepala Cabang
-  - `supervisor1` - Supervisor
-  - `manager1` - Manager
+- ✅ Login dengan database (PostgreSQL)
+- ✅ Data tersimpan di cloud (bukan localStorage)
+- ✅ Semua user lihat data yang sama
+- ✅ Real-time sync
+- ✅ Backup otomatis oleh Supabase
 
-### Formulir
-- **Risk Event Form** - Input risk dengan kategori (Operasional, Kredit, Pasar, dll) dan level risk (Rendah, Sedang, Tinggi, Ekstrem)
-- **Loss Event Form** - Input loss dengan 7 kategori Basel (Internal Fraud, External Fraud, Employment Practices, dll) dan perhitungan Net Loss otomatis
+## Setup Database Supabase
 
-### Manajemen Data
-- Dashboard dengan statistik real-time
-- Daftar Risk Event dengan filter dan pencarian
-- Daftar Loss Event dengan filter dan pencarian
-- Export/Import data ke format JSON (untuk backup)
+### 1. Buat Project Supabase
 
-## Cara Deploy ke GitHub Pages
+1. Buka [supabase.com](https://supabase.com)
+2. Sign up dengan GitHub
+3. Klik "New Project"
+4. Isi:
+   - **Name:** `bank-risk-db`
+   - **Database Password:** (buat password kuat)
+   - **Region:** Singapore (atau yang terdekat)
+5. Klik "Create new project"
 
-### 1. Buat Repository GitHub
-1. Login ke [GitHub](https://github.com)
-2. Klik tombol "+" di pojok kanan atas → "New repository"
-3. Isi nama repository: `bank-risk-management`
-4. Pilih "Public"
-5. Klik "Create repository"
+### 2. Buat Tabel
 
-### 2. Upload File
+Buka **SQL Editor** → **New query** → paste SQL berikut:
 
-#### Cara 1: Upload Manual (Mudah)
-1. Di halaman repository, klik "uploading an existing file"
-2. Drag & drop semua file dari folder `bank-risk-static/`
-3. Klik "Commit changes"
+```sql
+-- Tabel Users
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  nama TEXT NOT NULL,
+  jabatan TEXT NOT NULL,
+  role TEXT NOT NULL,
+  cabang TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-#### Cara 2: Menggunakan Git
-```bash
-# Masuk ke folder project
-cd bank-risk-static
+-- Insert default users
+INSERT INTO users (username, password, nama, jabatan, role, cabang) VALUES
+('admin', 'password', 'Administrator', 'Administrator', 'admin', 'Cabang Pusat'),
+('teller1', 'password', 'Teller Satu', 'Teller', 'user', 'Cabang Pusat'),
+('cs1', 'password', 'Customer Service', 'Customer Service', 'user', 'Cabang Utara'),
+('kc1', 'password', 'Kepala Cabang', 'Kepala Cabang', 'admin', 'Cabang Pusat'),
+('supervisor1', 'password', 'Supervisor', 'Supervisor', 'user', 'Cabang Selatan'),
+('manager1', 'password', 'Manager', 'Manager', 'admin', 'Cabang Pusat');
 
-# Inisialisasi git
-git init
+-- Tabel Risk Events
+CREATE TABLE risk_events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  user_nama TEXT,
+  cabang TEXT NOT NULL,
+  kategori TEXT NOT NULL,
+  deskripsi TEXT NOT NULL,
+  tanggal_kejadian DATE NOT NULL,
+  lokasi TEXT,
+  penyebab TEXT NOT NULL,
+  dampak TEXT NOT NULL,
+  level_risiko TEXT NOT NULL,
+  mitigasi TEXT NOT NULL,
+  pic TEXT NOT NULL,
+  target_penyelesaian DATE NOT NULL,
+  status TEXT DEFAULT 'draft',
+  nominal_dampak NUMERIC DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-# Tambahkan semua file
-git add .
-
-# Commit
-git commit -m "Initial commit"
-
-# Tambahkan remote repository (ganti USERNAME dengan username GitHub Anda)
-git remote add origin https://github.com/USERNAME/bank-risk-management.git
-
-# Push ke GitHub
-git branch -M main
-git push -u origin main
+-- Tabel Loss Events
+CREATE TABLE loss_events (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  user_nama TEXT,
+  cabang TEXT NOT NULL,
+  kategori_loss TEXT NOT NULL,
+  deskripsi TEXT NOT NULL,
+  tanggal_kejadian DATE NOT NULL,
+  lokasi TEXT,
+  penyebab TEXT NOT NULL,
+  unit_terkait TEXT,
+  nama_terlapor TEXT,
+  nominal_kerugian NUMERIC DEFAULT 0,
+  recovery NUMERIC DEFAULT 0,
+  net_loss NUMERIC DEFAULT 0,
+  keterangan_recovery TEXT,
+  tindakan_segera TEXT NOT NULL,
+  rencana_pencegahan TEXT,
+  pic TEXT NOT NULL,
+  target_penyelesaian DATE NOT NULL,
+  status_pelaporan TEXT DEFAULT 'internal',
+  status TEXT DEFAULT 'draft',
+  created_at TIMESTAMP DEFAULT NOW()
+);
 ```
 
-### 3. Aktifkan GitHub Pages
-1. Di repository GitHub, klik tab "Settings"
-2. Di sidebar kiri, klik "Pages"
-3. Di bagian "Source", pilih "Deploy from a branch"
-4. Pilih branch "main" dan folder "/ (root)"
-5. Klik "Save"
-6. Tunggu 1-2 menit, lalu akses URL yang muncul (biasanya: `https://USERNAME.github.io/bank-risk-management/`)
+### 3. Setup RLS (Row Level Security) - PENTING!
 
-## Struktur File
+Kalau RLS enabled, buat policies:
+
+```sql
+-- Policies untuk users
+CREATE POLICY "Allow anon select users" ON users FOR SELECT USING (true);
+
+-- Policies untuk risk_events
+CREATE POLICY "Allow anon all risk" ON risk_events FOR ALL USING (true);
+
+-- Policies untuk loss_events
+CREATE POLICY "Allow anon all loss" ON loss_events FOR ALL USING (true);
+```
+
+**Atau** disable RLS (tidak aman untuk production):
+- Table Editor → klik tabel → toggle "Enable RLS" OFF
+
+### 4. Dapatkan API Key
+
+1. Klik **Project Settings** (ikon gear ⚙️)
+2. Klik **API**
+3. Copy:
+   - **Project URL:** `https://xxxxx.supabase.co`
+   - **anon public:** `eyJhbGciOiJIUzI1NiIs...`
+
+### 5. Update File `js/supabase.js`
+
+Edit file `js/supabase.js`, ganti:
+
+```javascript
+const SUPABASE_URL = 'https://xxxxx.supabase.co';  // GANTI!
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIs...';    // GANTI!
+```
+
+## Deploy ke GitHub Pages
+
+Sama seperti versi static:
+
+1. Upload semua file ke repository GitHub
+2. Settings → Pages → Enable
+3. Akses: `https://USERNAME.github.io/bank-risk-management/`
+
+## File Structure
 
 ```
-bank-risk-static/
-├── index.html          # Dashboard utama
-├── login.html          # Halaman login
-├── risk-form.html      # Form input risk event
-├── loss-form.html      # Form input loss event
-├── risk-list.html      # Daftar risk events
-├── loss-list.html      # Daftar loss events
+bank-risk-supabase/
+├── index.html          # Dashboard
+├── login.html          # Login
+├── risk-form.html      # Form Risk
+├── loss-form.html      # Form Loss
+├── risk-list.html      # Daftar Risk
+├── loss-list.html      # Daftar Loss
 ├── css/
-│   └── style.css       # Stylesheet
+│   └── style.css       # Styling
 ├── js/
-│   └── app.js          # JavaScript utama (localStorage, auth, dll)
-└── README.md           # File ini
+│   └── supabase.js     # Config & functions
+└── README.md           # Dokumentasi
 ```
 
-## Cara Penggunaan
+## Login Default
 
-### Login Pertama Kali
-1. Buka halaman login
-2. Masukkan username: `admin` dan password: `password`
-3. Klik "Masuk"
+| Username | Password | Role |
+|----------|----------|------|
+| `admin` | `password` | Administrator |
+| `teller1` | `password` | Teller |
+| `cs1` | `password` | Customer Service |
+| `kc1` | `password` | Kepala Cabang |
+| `supervisor1` | `password` | Supervisor |
+| `manager1` | `password` | Manager |
 
-### Input Risk Event
-1. Klik menu "Risk Event" atau tombol "Risk Baru"
-2. Isi form dengan informasi risk
-3. Pilih level risk (Rendah/Sedang/Tinggi/Ekstrem)
-4. Klik "Simpan"
+## Troubleshooting
 
-### Input Loss Event
-1. Klik menu "Loss Event" atau tombol "Loss Baru"
-2. Pilih kategori loss sesuai Basel
-3. Isi deskripsi dan nominal kerugian
-4. Isi recovery (jika ada)
-5. Net Loss akan dihitung otomatis
-6. Klik "Simpan Loss Event"
+**Error: "Failed to fetch"**
+- Cek koneksi internet
+- Cek URL dan API key sudah benar
+- Cek CORS sudah di-enable di Supabase
 
-### Backup Data
-1. Di dashboard, bagian "Manajemen Data"
-2. Klik "Export Data (JSON)"
-3. File JSON akan di-download
-4. Simpan file tersebut sebagai backup
+**Error: "new row violates row-level security policy"**
+- Buat RLS policies seperti di atas
+- Atau disable RLS sementara
 
-### Restore Data
-1. Di dashboard, bagian "Manajemen Data"
-2. Klik "Import Data (JSON)"
-3. Pilih file backup JSON
-4. Konfirmasi untuk mengganti data saat ini
+**Data tidak muncul**
+- Cek browser console (F12)
+- Pastikan tabel sudah ada data
+- Cek RLS policies
 
-## Catatan Penting
+## Keuntungan vs LocalStorage
 
-- **Data tersimpan di browser** - Jika Anda menghapus cache/browser data, data akan hilang
-- **Gunakan Export secara berkala** untuk backup data
-- **Setiap browser/device memiliki data terpisah**
-- **Untuk akses dari multiple device**, export data dari device A lalu import ke device B
-
-## Teknologi
-
-- Pure HTML5, CSS3, JavaScript (ES6+)
-- Tidak ada framework atau library eksternal
-- localStorage untuk penyimpanan data
-- SessionStorage untuk autentikasi
-
-## Browser Support
-
-- Chrome/Edge (recommended)
-- Firefox
-- Safari
-- Opera
-
-## License
-
-Free to use for personal or commercial purposes.
+| Fitur | LocalStorage | Supabase |
+|-------|--------------|----------|
+| Data tersimpan | Browser masing-masing | Cloud (semua user sama) |
+| Backup | Manual export | Otomatis |
+| Ganti browser | Data hilang | Data tetap ada |
+| Multi device | Tidak sync | Sync otomatis |
+| Setup | Mudah | Butuh config |

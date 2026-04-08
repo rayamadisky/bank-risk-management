@@ -7,98 +7,100 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="login-page">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-header">
-                    <div class="login-logo">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11"/>
-                        </svg>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11"/>
+                    </svg>
+                </div>
+                <h1 class="login-title">Bank Risk Management</h1>
+                <p class="login-subtitle">Sistem Manajemen Risk & Loss Event</p>
+            </div>
+            
+            <div class="login-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
                     </div>
-                    <h1 class="login-title">Bank Risk Management</h1>
-                    <p class="login-subtitle">Sistem Manajemen Risiko & Loss Event</p>
-                </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 1.5rem;">
+                        Masuk
+                    </button>
+                </form>
                 
-                <div class="login-body">
-                    <div id="alertContainer"></div>
-                    
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label class="form-label required" for="username">Username</label>
-                            <input type="text" id="username" name="username" class="form-control" placeholder="Masukkan username" required autofocus>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required" for="password">Password</label>
-                            <div class="input-wrapper">
-                                <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan password" required>
-                                <button type="button" class="password-toggle" onclick="togglePassword()">
-                                    <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-lg btn-block" style="margin-top: 1rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
-                            </svg>
-                            Masuk
-                        </button>
-                    </form>
-                    
-                    <div class="demo-credentials">
-                        <div class="demo-credentials-title">Demo Login:</div>
-                        <div class="demo-credentials-item"><span>Admin:</span><span><code>admin</code> / <code>password</code></span></div>
-                        <div class="demo-credentials-item"><span>Teller:</span><span><code>teller1</code> / <code>password</code></span></div>
-                        <div class="demo-credentials-item"><span>CS:</span><span><code>cs1</code> / <code>password</code></span></div>
-                        <div class="demo-credentials-item"><span>KC:</span><span><code>kc1</code> / <code>password</code></span></div>
+                <div class="demo-credentials">
+                    <div class="demo-credentials-title">Demo Credentials:</div>
+                    <div class="demo-credentials-item">
+                        <span>Admin:</span>
+                        <span><code>admin</code> / <code>password</code></span>
+                    </div>
+                    <div class="demo-credentials-item">
+                        <span>Teller:</span>
+                        <span><code>teller1</code> / <code>password</code></span>
+                    </div>
+                    <div class="demo-credentials-item">
+                        <span>CS:</span>
+                        <span><code>cs1</code> / <code>password</code></span>
                     </div>
                 </div>
-                
-                <div class="login-footer">
-                    <p>Data disimpan di browser (localStorage)</p>
-                    <p style="margin-top: 0.25rem; font-size: 0.75rem;">v1.0.0 - Static Version</p>
-                </div>
+            </div>
+            
+            <div class="login-footer">
+                <p>&copy; 2024 Bank Risk Management System</p>
             </div>
         </div>
     </div>
 
-    <script src="js/app.js"></script>
-    <script src="js/supabase.js"></script>  <!-- TAMBAH INI -->
+    <script src="js/supabase.js"></script>
     <script>
-    // Check login
-    if (isLoggedIn()) {
-        window.location.href = 'index.html';
-    }
-
-    // Toggle password visibility
-    function togglePassword() {
-        const input = document.getElementById('password');
-        input.type = input.type === 'password' ? 'text' : 'password';
-    }
-
-    // Form submission - GANTI JADI INI
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        // GANTI DARI: const result = login(username, password);
-        // MENJADI:
-        const result = await loginDB(username, password);
-        
-        if (result.success) {
+        // Check if already logged in
+        if (isLoggedIn()) {
             window.location.href = 'index.html';
-        } else {
-            alert(result.message);
         }
-    });
+
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const result = await loginDB(username, password);
+                
+                if (result.success) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Gagal terhubung ke database. Periksa koneksi internet.');
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>

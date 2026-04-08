@@ -89,7 +89,14 @@
                         <div class="form-group">
                             <label class="form-label required">Cabang</label>
                             <select name="cabang" id="cabang" class="form-control" required>
-                                <!-- Options will be populated by JS -->
+                                <option value="cabang_pusat">Cabang Pusat</option>
+                                <option value="cabang_utara">Cabang Utara</option>
+                                <option value="cabang_selatan">Cabang Selatan</option>
+                                <option value="cabang_timur">Cabang Timur</option>
+                                <option value="cabang_barat">Cabang Barat</option>
+                                <option value="cabang_cibubur">Cabang Cibubur</option>
+                                <option value="cabang_bekasi">Cabang Bekasi</option>
+                                <option value="cabang_tangerang">Cabang Tangerang</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -270,7 +277,7 @@
                 </div>
 
                 <!-- Submit -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
                     <div>
                         <label class="form-check" style="margin-bottom: 0.5rem;">
                             <input type="radio" name="status" value="draft" checked> Simpan sebagai Draft
@@ -288,23 +295,32 @@
         </div>
     </main>
 
-    <script src="js/app.js"></script>
+    <script src="js/supabase.js"></script>
     <script>
         // Check login
         if (!isLoggedIn()) {
             window.location.href = 'login.html';
         }
 
-        // Populate cabang dropdown
+        // Set default cabang from user
         const user = getCurrentUser();
-        const cabangSelect = document.getElementById('cabang');
-        Object.entries(CABANG_LIST).forEach(([key, label]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = label;
-            if (label === user.cabang) option.selected = true;
-            cabangSelect.appendChild(option);
-        });
+        if (user.cabang) {
+            const cabangSelect = document.getElementById('cabang');
+            const cabangMap = {
+                'Cabang Pusat': 'cabang_pusat',
+                'Cabang Utara': 'cabang_utara',
+                'Cabang Selatan': 'cabang_selatan',
+                'Cabang Timur': 'cabang_timur',
+                'Cabang Barat': 'cabang_barat',
+                'Cabang Cibubur': 'cabang_cibubur',
+                'Cabang Bekasi': 'cabang_bekasi',
+                'Cabang Tangerang': 'cabang_tangerang'
+            };
+            const userCabangKey = cabangMap[user.cabang];
+            if (userCabangKey) {
+                cabangSelect.value = userCabangKey;
+            }
+        }
 
         // Set default date
         document.querySelector('input[name="tanggal_kejadian"]').valueAsDate = new Date();
@@ -316,6 +332,24 @@
             card.querySelector('input').checked = true;
         }
 
+        // Format currency
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+                input.value = value;
+            }
+        }
+
+        function parseCurrency(value) {
+            return parseFloat(value.replace(/[^\d]/g, '')) || 0;
+        }
+
+        function formatRupiah(amount) {
+            if (!amount || isNaN(amount)) return 'Rp 0';
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+        }
+
         // Calculate net loss
         function calculateNetLoss() {
             const nominal = parseCurrency(document.getElementById('nominalKerugian').value || '0');
@@ -325,7 +359,7 @@
         }
 
         // Form submission
-        document.getElementById('lossForm').addEventListener('submit', function(e) {
+        document.getElementById('lossForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
@@ -333,8 +367,6 @@
             const recovery = parseCurrency(formData.get('recovery') || '0');
             
             const data = {
-                user_id: getCurrentUser().id,
-                user_nama: getCurrentUser().nama,
                 cabang: formData.get('cabang'),
                 kategori_loss: formData.get('kategori_loss'),
                 deskripsi: formData.get('deskripsi'),
@@ -355,12 +387,14 @@
                 status: formData.get('status')
             };
             
-            createLossEvent(data);
-            showAlert('Loss event berhasil disimpan!', 'success');
-            
-            setTimeout(() => {
+            try {
+                await createLossEventDB(data);
+                alert('Loss event berhasil disimpan!');
                 window.location.href = 'index.html';
-            }, 1500);
+            } catch (error) {
+                alert('Gagal menyimpan data. Periksa koneksi internet.');
+                console.error(error);
+            }
         });
     </script>
 </body>
